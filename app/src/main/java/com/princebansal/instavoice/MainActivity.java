@@ -91,8 +91,8 @@ public class MainActivity extends AppCompatActivity {
         Log.v("phoneno",mPhoneNumber);
         if (!TextUtils.isEmpty(mPhoneNumber))
         {
-            country_code.setText(mPhoneNumber.substring(0,1));
-            phone_no.setText(mPhoneNumber.substring(2,mPhoneNumber.length()));
+            country_code.setText(mPhoneNumber.substring(1,3));
+            phone_no.setText(mPhoneNumber.substring(3,mPhoneNumber.length()));
             phone_no.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View view, boolean b) {

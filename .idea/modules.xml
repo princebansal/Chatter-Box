@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/InstaVoice.iml" filepath="$PROJECT_DIR$/InstaVoice.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Chatter-Box.iml" filepath="$PROJECT_DIR$/Chatter-Box.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

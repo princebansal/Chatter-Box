@@ -2,6 +2,7 @@ package com.princebansal.instavoice.API;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.ProgressBar;
@@ -16,6 +17,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.princebansal.instavoice.AppController;
+import com.princebansal.instavoice.DashboardActivity;
 
 import org.json.JSONObject;
 
@@ -153,19 +155,23 @@ public class RegistrationAPI {
                             {
                                 String login_id=res.getString("login_id");
                                 String user_secure_key=res.getString("user_secure_key");
-                                Log.v("pass",res.getString("mqtt_password"));
+                                //
+                                // Log.v("pass",res.getString("mqtt_password"));
                                 SharedPreferences preferences=context.getSharedPreferences("MyPrefs",Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor=preferences.edit();
                                 editor.putString("login_id",login_id);
                                 editor.putString("user_secure_key",user_secure_key);
-                                editor.putString("mqtt_password",res.getString("mqtt_password"));
+                                //editor.putString("mqtt_password",res.getString("mqtt_password"));
                                 editor.commit();
+
+                                context.startActivity(new Intent(context, DashboardActivity.class));
 
 
                             }
 
 
-                        } catch (Throwable t) {
+                        } catch (Exception t) {
+                            t.printStackTrace();
                         }
 
 
