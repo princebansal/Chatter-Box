@@ -1,4 +1,4 @@
-package com.princebansal.instavoice;
+package com.princebansal.instavoice.Entity.Activities;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -17,8 +17,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.princebansal.instavoice.API.RegistrationAPI;
+import com.princebansal.instavoice.R;
 
-public class MainActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
 
     private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE =1 ;
     EditText phone_no,country_code;
@@ -46,11 +47,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (!TextUtils.isEmpty(phone_no.getText().toString())&&!TextUtils.isEmpty(country_code.getText().toString()))
                 {
-                    RegistrationAPI.registeruser(MainActivity.this,sim_serial_num,phone_no.getText().toString(),country_code.getText().toString(),networkOperator,deviceId,PHONE_NO_EDIT_STATE,COUNTRY_CODE_EDIT_STATE);
+                    RegistrationAPI.registeruser(RegisterActivity.this,sim_serial_num,phone_no.getText().toString(),country_code.getText().toString(),networkOperator,deviceId,PHONE_NO_EDIT_STATE,COUNTRY_CODE_EDIT_STATE);
                 }
                 else
                 {
-                    Toast.makeText(MainActivity.this,"Please provide all the details",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this,"Please provide all the details",Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">Insta Voice</string>
+
+
+    <string name="app_name">Chatter Box</string>
+    <string name="no_content_label">No content available</string>
+    <string name="favourite_menu_title">Mark as favourite</string>
+    <string name="favourite_menu_title_clear">Clear all</string>
+
+    <string-array name="page_titles">
+        <item>Board</item>
+        <item>Follow</item>
+    </string-array>
 </resources>

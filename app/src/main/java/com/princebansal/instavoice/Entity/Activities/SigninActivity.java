@@ -1,4 +1,4 @@
-package com.princebansal.instavoice;
+package com.princebansal.instavoice.Entity.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.princebansal.instavoice.*;
 import com.princebansal.instavoice.API.SigninAPI;
 
 /**
@@ -25,7 +26,7 @@ public class SigninActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
         init();
         setinit();
     }
@@ -44,7 +45,7 @@ public class SigninActivity extends AppCompatActivity {
         signup_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(SigninActivity.this,MainActivity.class);
+                Intent intent=new Intent(SigninActivity.this, RegisterActivity.class);
                 startActivity(intent);
             }
         });

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2016. Created by Prince Bansal on 16-08-2016.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="right"
+    android:orientation="horizontal"
+    android:padding="15dp"
+    android:weightSum="100"
+    android:id="@+id/layout"
+    android:background="@drawable/bg_highlighted">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="70"
+        android:orientation="vertical"
+        android:gravity="right">
+
+
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:id="@+id/header">
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:textColor="@color/primary_head_color"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:text="Atif Khatri"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:id="@+id/image"/>
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_stars_yellow_24dp"
+                android:visibility="gone"
+                android:id="@+id/fav_icon"/>
+        <TextView
+            android:id="@+id/message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:textColor="@color/primary_text_color"
+            android:textSize="17sp"
+            android:background="@drawable/bg_message"
+            android:text="Hello, how are you?"
+            android:layout_marginLeft="10dp"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:gravity="center_vertical"
+            android:padding="5dp"
+            android:textColor="@color/primary_text_secondary_color"
+            android:textSize="12sp"
+            android:text="1:10 AM"/>
+    </LinearLayout>
+
+</LinearLayout>

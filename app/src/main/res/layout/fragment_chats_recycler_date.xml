@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2016. Created by Prince Bansal on 16-08-2016.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_message_head"
+    android:orientation="horizontal"
+    android:layout_margin="15dp"
+    android:weightSum="100"
+    android:gravity="center"
+    android:padding="10dp">
+
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:text="26th January"
+        android:textColor="@color/primary_head_color"
+        android:textSize="12sp" />
+
+</LinearLayout>
