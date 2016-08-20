@@ -5,8 +5,12 @@
 package com.princebansal.instavoice.Entity.Fragments;
 
 import android.content.Context;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -27,19 +31,31 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.princebansal.instavoice.API.UploadAudio;
 import com.princebansal.instavoice.Boundary.API.ConnectAPI;
 import com.princebansal.instavoice.Boundary.Managers.DataHandler;
+import com.princebansal.instavoice.Entity.Activities.MainActivity;
+import com.princebansal.instavoice.Entity.Actors.Message;
 import com.princebansal.instavoice.R;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class ChatFragment extends Fragment implements ConnectAPI.ServerAuthenticateListener {
+public class ChatFragment extends Fragment implements ConnectAPI.ServerAuthenticateListener, View.OnClickListener {
 
     private static final String TAG = ChatFragment.class.getSimpleName();
+    private boolean isRecording=false;
+    private long timeSpent=0;
+    private String outputFile="";
 
     public static ChatFragment newInstance() {
 
@@ -55,25 +71,32 @@ public class ChatFragment extends Fragment implements ConnectAPI.ServerAuthentic
     private DataHandler dataHandler;
     private ChatAdapter adapter;
 
+    private MediaRecorder mediaRecorder;
+
     private Menu mMenu;
 
     private RecyclerView recyclerView;
-    private TextView noContentView;
+    private TextView noContentView,timer;
     private ProgressBar progressBar;
     private View layout;
+    private ImageView cancelButton;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private FloatingActionButton recordButton;
 
     private int favouriteposition = -1;
     private List newList = new ArrayList();
     private ArrayList<Integer> favMessageQueue;
 
 
+
     public boolean messageSelectedForFavourite = false;
+    private ArrayList<Integer> type = new ArrayList<>();
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+        //setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -100,8 +123,16 @@ public class ChatFragment extends Fragment implements ConnectAPI.ServerAuthentic
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         noContentView = (TextView) view.findViewById(R.id.no_content_view);
+        timer = (TextView) view.findViewById(R.id.timer);
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        recordButton=(FloatingActionButton)view.findViewById(R.id.record_fab);
+        cancelButton=(ImageView)view.findViewById(R.id.cancel);
+
+        mediaRecorder=new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
+        mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.DEFAULT);
     }
 
     private void setInit() {
@@ -110,21 +141,23 @@ public class ChatFragment extends Fragment implements ConnectAPI.ServerAuthentic
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                connectAPI.refresh();
+                connectAPI.fetchMessages();
             }
 
         });
+        recordButton.setOnClickListener(this);
+        cancelButton.setOnClickListener(this);
     }
 
     private void setData() {
         if (dataHandler.isDatabaseBuild()) {
             updateData();
         } else {
-            connectAPI.refresh();
+            connectAPI.fetchMessages();
         }
     }
 
-    @Override
+    /*@Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         Log.i(TAG, "onCreateOptionsMenu: fragment");
@@ -167,7 +200,7 @@ public class ChatFragment extends Fragment implements ConnectAPI.ServerAuthentic
         }
         return false;
     }
-
+*/
     @Override
     public void onRequestInitiated(int code) {
         progressBar.setVisibility(View.VISIBLE);
@@ -192,14 +225,20 @@ public class ChatFragment extends Fragment implements ConnectAPI.ServerAuthentic
         showMessage(message);
     }
 
+    @Override
+    public void onRequestCompleted(int coversationFetchCode, List<Message> list) {
+        newList=list;
+        type=new ArrayList<>();
+        updateData();
+    }
+
     private void updateData() {
         List<Message> list = dataHandler.getMessagesList();
 
 
-        ArrayList<Integer> type = new ArrayList<>();
         String datePrevious = "";
         for (int i = 0; i < list.size(); i++) {
-            String date = Message.formatDateForView(getActivity(), list.get(i).getTime());
+            String date = Message.formatDateForView(getActivity(), list.get(i).getMessageDate());
             if (i == 0) {
                 newList.add(date);
                 newList.add(list.get(i));
@@ -227,11 +266,98 @@ public class ChatFragment extends Fragment implements ConnectAPI.ServerAuthentic
         Snackbar.make(layout, message, Snackbar.LENGTH_SHORT).show();
     }
 
-
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.record_fab:
+                if(isRecording){
+                    timer.setVisibility(View.GONE);
+                    cancelButton.setVisibility(View.GONE);
+                    stopRecording();
+                    addToList();
+                }else{
+                    timer.setVisibility(View.VISIBLE);
+                    cancelButton.setVisibility(View.VISIBLE);
+                    timer.setText("00:00");
+                    startRecording();
+                }
+                break;
+            case R.id.cancel:
+                timer.setVisibility(View.GONE);
+                cancelButton.setVisibility(View.GONE);
+                stopRecording();
+        }
     }
+
+    private void addToList() {
+        Message message=new Message();
+        message.setAnnotation("Recording");
+        message.setBloggerDisplayName("prince");
+        message.setDuration(timeSpent*1000);
+        message.setFromBloggerId(123456789);
+        message.setMediaFormat(".wav");
+        message.setMessageBase64(false);
+        message.setMessageContentType("a");
+        message.setMessageDate(System.currentTimeMillis());
+        message.setOutputFile(outputFile);
+        newList.add(message);
+        type.add(ChatAdapter.MESSAGE_TYPE);
+        adapter.setContentList(newList);
+        adapter.setItemType(type);
+        adapter.notifyItemChanged(newList.size()-1);
+        UploadAudio uploadAudio=new UploadAudio(getActivity(),message.getOutputFile(),getActivity());
+        uploadAudio.execute();
+
+    }
+
+    private void startRecording() {
+        File file=new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/Chatter");
+        file.mkdirs();
+        outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Chatter/" + "recording+"+System.currentTimeMillis()+".wav";;
+        isRecording=true;
+        recordButton.setImageResource(R.drawable.ic_stop_black_24dp);
+        Thread stopWatch=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int i=0;
+                while(isRecording){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    i=i+1;
+                    timeSpent=i;
+                    final int c=i;
+                    final int sec=c%60;
+                    final int min=c/60;
+                    ChatFragment.this.getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            timer.setText((min<10?"0"+min:min)+":"+(sec<10?"0"+sec:sec));
+                        }
+                    });
+                }
+            }
+        });
+        mediaRecorder.setOutputFile(outputFile);
+        try {
+            mediaRecorder.prepare();
+            mediaRecorder.start();
+            stopWatch.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stopRecording(){
+        isRecording=false;
+        recordButton.setImageResource(R.drawable.ic_mic_black_24dp);
+        mediaRecorder.stop();
+        mediaRecorder.release();
+    }
+
 
     public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -252,10 +378,12 @@ public class ChatFragment extends Fragment implements ConnectAPI.ServerAuthentic
 
         }
 
-        public void setAsFavourite(int position,boolean isFavourite) {
-            ((Message) contentList.get(position)).setFavourite(isFavourite);
-            ((Message) contentList.get(position)).setSelected(false);
-            notifyItemChanged(position);
+        public void setItemType(ArrayList<Integer> itemType) {
+            this.itemType = itemType;
+        }
+
+        public void setContentList(List contentList) {
+            this.contentList = contentList;
         }
 
         @Override
@@ -281,25 +409,15 @@ public class ChatFragment extends Fragment implements ConnectAPI.ServerAuthentic
             if (getItemViewType(position) == ChatAdapter.MESSAGE_TYPE) {
                 Message message = (Message) contentList.get(position);
                 MessageViewHolder messageViewHolder = (MessageViewHolder) holder;
-                messageViewHolder.time.setText(Message.formatTimeForView(getActivity(), message.getTime()));
-                messageViewHolder.messageBody.setText(message.getBody());
-                if (message.isFavourite()) {
-                    messageViewHolder.favIcon.setVisibility(View.VISIBLE);
-                } else {
-                    messageViewHolder.favIcon.setVisibility(View.GONE);
-                }
-                if (message.isSelected()) {
-                    messageViewHolder.layout.setActivated(true);
-                } else {
-                    messageViewHolder.layout.setActivated(false);
-                }
+                messageViewHolder.time.setText(Message.formatTimeForView(getActivity(), message.getMessageDate()));
+                messageViewHolder.messageBody.setText(message.getAnnotation());
                 if (position - 1 >= 0 && getItemViewType(position - 1) == MESSAGE_TYPE &&
-                        ((Message) contentList.get(position - 1)).getUsername().equals(message.getUsername())) {
+                        ((Message) contentList.get(position - 1)).getFromBloggerId()==message.getFromBloggerId()) {
                     messageViewHolder.header.setVisibility(View.GONE);
                 } else {
                     messageViewHolder.header.setVisibility(View.VISIBLE);
-                    messageViewHolder.username.setText(message.getUsername());
-                    Glide.with(ChatFragment.this).load(message.getImageUrl())
+                    messageViewHolder.username.setText(message.getBloggerDisplayName());
+                    Glide.with(ChatFragment.this).load("")
                             .asBitmap()
                             .centerCrop()
                             .placeholder(R.drawable.ic_tag_faces_black_24dp)
@@ -323,12 +441,12 @@ public class ChatFragment extends Fragment implements ConnectAPI.ServerAuthentic
             return itemType.get(position);
         }
 
-        public class MessageViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener {
+        public class MessageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
             private TextView messageBody, time, username;
             private CircleImageView profileImage;
             private LinearLayout header, layout;
-            private ImageView favIcon;
+            private ImageView playIcon;
             private GestureDetector gestureDetector;
 
             public MessageViewHolder(View itemView) {
@@ -339,9 +457,10 @@ public class ChatFragment extends Fragment implements ConnectAPI.ServerAuthentic
                 profileImage = (CircleImageView) itemView.findViewById(R.id.image);
                 header = (LinearLayout) itemView.findViewById(R.id.header);
                 layout = (LinearLayout) itemView.findViewById(R.id.layout);
-                favIcon = (ImageView) itemView.findViewById(R.id.fav_icon);
-                layout.setOnTouchListener(this);
-                gestureDetector = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+                playIcon = (ImageView) itemView.findViewById(R.id.fav_icon);
+                playIcon.setOnClickListener(this);
+                //layout.setOnTouchListener(this);
+                /*gestureDetector = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
                     @Override
                     public void onLongPress(MotionEvent e) {
                         super.onLongPress(e);
@@ -391,14 +510,37 @@ public class ChatFragment extends Fragment implements ConnectAPI.ServerAuthentic
 
                         return true;
                     }
-                });
+                });*/
             }
 
             @Override
+            public void onClick(View view) {
+                MediaPlayer m = new MediaPlayer();
+
+                try {
+                    m.setDataSource(((Message)contentList.get(getAdapterPosition())).getOutputFile());
+                }
+
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    m.prepare();
+                }
+
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                m.start();
+            }
+
+            /*@Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
 
                 return gestureDetector.onTouchEvent(motionEvent);
-            }
+            }*/
         }
 
         public class DateViewHolder extends RecyclerView.ViewHolder {

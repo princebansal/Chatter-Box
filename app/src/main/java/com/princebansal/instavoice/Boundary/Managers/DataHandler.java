@@ -11,9 +11,9 @@ import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.prince.android.haptik.Control.DatabaseContract;
-import com.prince.android.haptik.Entity.Actors.Insight;
-import com.prince.android.haptik.Entity.Actors.Message;
+import com.princebansal.instavoice.Control.DatabaseContract;
+import com.princebansal.instavoice.Entity.Actors.Insight;
+import com.princebansal.instavoice.Entity.Actors.Message;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,7 +33,7 @@ public class DataHandler {
         this.context = c;
 
         try {
-            preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            preferences = context.getSharedPreferences("MyPrefs",Context.MODE_PRIVATE);
         } catch (Exception ignore) {
             ignore.printStackTrace();
         }
@@ -100,7 +100,7 @@ public class DataHandler {
                 int i = 0;
                 ContentValues messagesToLocalValues[] = new ContentValues[messageArrayList.size()];
                 for (Message remoteMessage : messageArrayList) {
-                    Log.d("messagesList", TAG + "> Remote -> Local [" + remoteMessage.getBody() + "]");
+                    //Log.d("messagesList", TAG + "> Remote -> Local [" + remoteMessage.getBody() + "]");
                     messagesToLocalValues[i++] = remoteMessage.getContentValues();
                 }
                 context.getContentResolver().bulkInsert(DatabaseContract.CONTENT_URI_MESSAGE, messagesToLocalValues);
@@ -129,8 +129,7 @@ public class DataHandler {
         return new ArrayList<>();
     }
 
-
-    public List<Insight> getInsightsList() {
+    /*public List<Insight> getInsightsList() {
         try {
             List<Insight> insights=new ArrayList<>();
             Cursor cursor = context.getContentResolver().query(DatabaseContract.CONTENT_URI_MESSAGE, null, null, null, ConnectDatabase.KEY_DATE + " ASC");
@@ -198,7 +197,7 @@ public class DataHandler {
         }
         return null;
     }
-
+*/
     public boolean isDatabaseBuild() {
 
         Cursor cursor = context.getContentResolver().query(DatabaseContract.CONTENT_URI_MESSAGE, null, null, null, null);
@@ -206,7 +205,7 @@ public class DataHandler {
         return bool;
     }
 
-    public boolean markAsFavourite(Object o,boolean isFavourite) {
+   /* public boolean markAsFavourite(Object o,boolean isFavourite) {
         Message message=(Message)o;
         ContentValues contentValues=new ContentValues();
         contentValues.put(ConnectDatabase.KEY_FAVOURITE,isFavourite?1:0);
@@ -220,5 +219,21 @@ public class DataHandler {
         }else {
             return false;
         }
+    }
+*/
+    public String getUserSecureKey() {
+        return getString("user_secure_key","");
+    }
+
+    public void saveSimSerailNumber(String sim_serial_num) {
+        saveString("sim_serial_num",sim_serial_num);
+    }
+
+    public String getSimSerialNumber(){
+        return getString("sim_serial_num","");
+    }
+
+    public String getIvUserId() {
+        return getString("iv_user_id","0");
     }
 }

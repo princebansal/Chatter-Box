@@ -3,6 +3,13 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="message_bg_pressed">#283593</color>
+    <color name="message_bg">#304ffe</color>
+    <color name="primary_text_color">#FFFFFF</color>
+    <color name="primary_head_color">#000000</color>
+    <color name="message_head_bg">#23283593</color>
+    <color name="primary_text_secondary_color">#bdbdbd</color>
+    <color name="color_highlight">#12304ffe</color>
     <color name="background">#eceff1</color>
 
 </resources>

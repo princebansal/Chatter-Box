@@ -17,7 +17,7 @@ public class DatabaseContract {
     public static final String CONTENT_TYPE_DIR_MESSAGE = "com.prince.android.cursor.dir/haptik.message";
     public static final String CONTENT_ITEM_TYPE_MESSAGE = "com.prince.android.cursor.item/haptik.message";
 
-    public static final String AUTHORITY = "com.prince.android.provider";
+    public static final String AUTHORITY = "com.prince.android.chatter.provider";
     // content://<authority>/<path to type>
     public static final Uri CONTENT_URI_MESSAGE = Uri.parse("content://" + AUTHORITY + "/messages");
 

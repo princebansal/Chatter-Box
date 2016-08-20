@@ -14,7 +14,11 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import static com.prince.android.haptik.Control.DatabaseContract.*;
+import static com.princebansal.instavoice.Control.DatabaseContract.AUTHORITY;
+import static com.princebansal.instavoice.Control.DatabaseContract.CONTENT_ITEM_TYPE_MESSAGE;
+import static com.princebansal.instavoice.Control.DatabaseContract.CONTENT_TYPE_DIR_MESSAGE;
+import static com.princebansal.instavoice.Control.DatabaseContract.CONTENT_URI_MESSAGE;
+
 
 public class ConnectContentProvider extends ContentProvider {
 

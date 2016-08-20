@@ -6,49 +6,48 @@ package com.princebansal.instavoice.Entity.Fragments;
 
 import android.content.Context;
 import android.database.ContentObserver;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.prince.android.haptik.Boundary.API.ConnectAPI;
-import com.prince.android.haptik.Boundary.Managers.DataHandler;
-import com.prince.android.haptik.Control.DatabaseContract;
-import com.prince.android.haptik.Entity.Actors.Insight;
-import com.prince.android.haptik.Entity.Actors.Message;
-import com.prince.android.haptik.R;
+import com.princebansal.instavoice.Boundary.API.ConnectAPI;
+import com.princebansal.instavoice.Boundary.Managers.DataHandler;
+import com.princebansal.instavoice.Control.DatabaseContract;
+import com.princebansal.instavoice.Entity.Actors.Insight;
+import com.princebansal.instavoice.Entity.Actors.Message;
+import com.princebansal.instavoice.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class InsightsFragment extends Fragment implements ConnectAPI.ServerAuthenticateListener{
+public class FollowFragment extends Fragment implements ConnectAPI.ServerAuthenticateListener, View.OnClickListener {
 
 
-    private static final String TAG = InsightsFragment.class.getSimpleName();
+    private static final String TAG = FollowFragment.class.getSimpleName();
 
-    public static InsightsFragment newInstance() {
+    public static FollowFragment newInstance() {
 
         Bundle args = new Bundle();
 
-        InsightsFragment fragment = new InsightsFragment();
+        FollowFragment fragment = new FollowFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -62,6 +61,8 @@ public class InsightsFragment extends Fragment implements ConnectAPI.ServerAuthe
     private TextView noContentView;
     private ProgressBar progressBar;
     private View layout;
+    private EditText blogIdEditText;
+    private Button follow,unfollow;
     private SwipeRefreshLayout swipeRefreshLayout;
 
 
@@ -69,7 +70,7 @@ public class InsightsFragment extends Fragment implements ConnectAPI.ServerAuthe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_insights, container, false);
+        View view = inflater.inflate(R.layout.fragment_follow, container, false);
         return view;
     }
 
@@ -90,9 +91,14 @@ public class InsightsFragment extends Fragment implements ConnectAPI.ServerAuthe
         noContentView = (TextView) view.findViewById(R.id.no_content_view);
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         swipeRefreshLayout=(SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
+        follow=(Button)view.findViewById(R.id.follow);
+        unfollow=(Button)view.findViewById(R.id.unfollow);
+        blogIdEditText=(EditText)view.findViewById(R.id.blogger_id);
     }
 
     private void setInit() {
+        follow.setOnClickListener(this);
+        unfollow.setOnClickListener(this);
         connectAPI.setServerAuthenticateListener(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -126,11 +132,11 @@ public class InsightsFragment extends Fragment implements ConnectAPI.ServerAuthe
 
     private void setData() {
         if(dataHandler.isDatabaseBuild()){
-            List<Insight> list = dataHandler.getInsightsList();
+            List<Insight> list = new ArrayList<>();
             adapter = new InsightsAdapter(getActivity(), list);
             recyclerView.setAdapter(adapter);
         }else{
-            connectAPI.refresh();
+            //connectAPI.refresh();
         }
     }
 
@@ -145,7 +151,7 @@ public class InsightsFragment extends Fragment implements ConnectAPI.ServerAuthe
         progressBar.setVisibility(View.GONE);
         noContentView.setVisibility(View.GONE);
         if (dataHandler.isDatabaseBuild()) {
-            List<Insight> list = dataHandler.getInsightsList();
+            List<Insight> list =new ArrayList<>();
             adapter = new InsightsAdapter(getActivity(), list);
             recyclerView.setAdapter(adapter);
         }
@@ -160,8 +166,28 @@ public class InsightsFragment extends Fragment implements ConnectAPI.ServerAuthe
         showMessage(message);
     }
 
+    @Override
+    public void onRequestCompleted(int coversationFetchCode, List<Message> list) {
+
+    }
+
     private void showMessage(String message) {
         Snackbar.make(layout, message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.follow:
+                if(!TextUtils.isEmpty(blogIdEditText.getText().toString())){
+                    connectAPI.follow(getActivity(),blogIdEditText.getText().toString());
+                }
+                break;
+            case R.id.unfollow:
+                if(!TextUtils.isEmpty(blogIdEditText.getText().toString())){
+                    connectAPI.unfollow(getActivity(),blogIdEditText.getText().toString());
+                }
+        }
     }
 
 
@@ -195,7 +221,7 @@ public class InsightsFragment extends Fragment implements ConnectAPI.ServerAuthe
             holder.name.setText(insight.getName());
             holder.total.setText("Total: " + insight.getTotal());
             holder.favourite.setText(String.valueOf(insight.getFavourites()));
-            Glide.with(InsightsFragment.this).load(insight.getImageUrl())
+            Glide.with(FollowFragment.this).load(insight.getImageUrl())
                     .asBitmap()
                     .centerCrop()
                     .placeholder(R.drawable.ic_tag_faces_black_24dp)

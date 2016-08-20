@@ -8,143 +8,232 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.text.format.DateUtils;
-import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
 import org.json.JSONException;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import static com.prince.android.haptik.Boundary.Managers.ConnectDatabase.COLUMNS;
 
 public class Message {
 
     private static final String TAG = Message.class.getSimpleName();
-    private String body;
-    private String username;
-    @SerializedName("Name")
-    private String name;
-    @SerializedName("image-url")
-    private String imageUrl;
-    @SerializedName("message-time")
-    private String time;
-    private String rawTime;
-    private boolean favourite=false;
-    private boolean selected=false;
 
-    public String getBody() {
-        return body;
+    @SerializedName("from_blogger_id")
+    private long fromBloggerId;
+    @SerializedName("msg_id")
+    private long messageId;
+    @SerializedName("msg_content_type")
+    private String messageContentType;
+    @SerializedName("msg_content")
+    private Chatt chattContent;
+    private long duration;
+    @SerializedName("msg_dt")
+    private long messageDate;
+    private String annotation;
+    @SerializedName("blogger_display_name")
+    private String bloggerDisplayName;
+    private String profileFolderName;
+    private String blogFolderName;
+    @SerializedName("is_msg_base64")
+    private boolean isMessageBase64;
+    @SerializedName("media_format")
+    private String mediaFormat;
+    @SerializedName("msg_flow")
+    private String messageFlow;
+    @SerializedName("isReceivedMsg")
+    private boolean isReceivedMessage;
+    private String type;
+    @SerializedName("like_cnt")
+    private int likeCount;
+    @SerializedName("comment_cnt")
+    private int commentCount;
+    @SerializedName("shares_cnt")
+    private int sharesCount;
+    @SerializedName("is_self_liked")
+    private boolean isSelfLiked;
+    private String outputFile;
+
+
+    public long getFromBloggerId() {
+        return fromBloggerId;
     }
 
-    public void setBody(String body) {
-        this.body = body;
+    public void setFromBloggerId(long fromBloggerId) {
+        this.fromBloggerId = fromBloggerId;
     }
 
-    public String getUsername() {
-        return username;
+    public long getMessageId() {
+        return messageId;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setMessageId(long messageId) {
+        this.messageId = messageId;
     }
 
-    public String getName() {
-        return name;
+    public String getMessageContentType() {
+        return messageContentType;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMessageContentType(String messageContentType) {
+        this.messageContentType = messageContentType;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public Chatt getChattContent() {
+        return chattContent;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setChattContent(Chatt chattContent) {
+        this.chattContent = chattContent;
     }
 
-    public String getTime() {
-        return time;
+    public long getDuration() {
+        return duration;
     }
 
-    public void setTime(String time) {
-        setRawTime(time);
-        this.time = getTimeInMillis(time);;
+    public void setDuration(long duration) {
+        this.duration = duration;
     }
 
-    public String getRawTime() {
-        return rawTime;
+    public long getMessageDate() {
+        return messageDate;
     }
 
-    public void setRawTime(String rawTime) {
-        this.rawTime = rawTime;
+    public void setMessageDate(long messageDate) {
+        this.messageDate = messageDate;
     }
 
-    public boolean isFavourite() {
-        return favourite;
+    public String getAnnotation() {
+        return annotation;
     }
 
-    public void setFavourite(boolean favourite) {
-        this.favourite = favourite;
+    public void setAnnotation(String annotation) {
+        this.annotation = annotation;
     }
 
-    public boolean isSelected() {
-        return selected;
+    public String getBloggerDisplayName() {
+        return bloggerDisplayName;
     }
 
-    public void setSelected(boolean selected) {
-        this.selected = selected;
+    public void setBloggerDisplayName(String bloggerDisplayName) {
+        this.bloggerDisplayName = bloggerDisplayName;
     }
 
-    private String getTimeInMillis(String time) {
-        Log.i(TAG, "getTimeInMillis: "+time);
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
-        long timeInMillis;
-        try {
-            timeInMillis=simpleDateFormat.parse(time).getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return String.valueOf(timeInMillis);
+    public String getProfileFolderName() {
+        return profileFolderName;
+    }
+
+    public void setProfileFolderName(String profileFolderName) {
+        this.profileFolderName = profileFolderName;
+    }
+
+    public String getBlogFolderName() {
+        return blogFolderName;
+    }
+
+    public void setBlogFolderName(String blogFolderName) {
+        this.blogFolderName = blogFolderName;
+    }
+
+    public boolean isMessageBase64() {
+        return isMessageBase64;
+    }
+
+    public void setMessageBase64(boolean messageBase64) {
+        isMessageBase64 = messageBase64;
+    }
+
+    public String getMediaFormat() {
+        return mediaFormat;
+    }
+
+    public void setMediaFormat(String mediaFormat) {
+        this.mediaFormat = mediaFormat;
+    }
+
+    public String getMessageFlow() {
+        return messageFlow;
+    }
+
+    public void setMessageFlow(String messageFlow) {
+        this.messageFlow = messageFlow;
+    }
+
+    public boolean isReceivedMessage() {
+        return isReceivedMessage;
+    }
+
+    public void setReceivedMessage(boolean receivedMessage) {
+        isReceivedMessage = receivedMessage;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public int getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
+    }
+
+    public int getSharesCount() {
+        return sharesCount;
+    }
+
+    public void setSharesCount(int sharesCount) {
+        this.sharesCount = sharesCount;
+    }
+
+    public boolean isSelfLiked() {
+        return isSelfLiked;
+    }
+
+    public void setSelfLiked(boolean selfLiked) {
+        isSelfLiked = selfLiked;
     }
 
     public ContentValues getContentValues() throws JSONException {
         ContentValues values = new ContentValues();
-        values.put(COLUMNS[0], getBody());
-        values.put(COLUMNS[1], getUsername());
-        values.put(COLUMNS[2], getName());
-        values.put(COLUMNS[3], getImageUrl());
-        values.put(COLUMNS[4], getTime());
-        values.put(COLUMNS[5], isFavourite()?1:0);
         return values;
     }
 
     public static Message fromCursor(Cursor cursor) throws JSONException {
-        Message message=new Message();
-        message.setBody(cursor.getString(0));
-        message.setUsername(cursor.getString(1));
-        message.setName(cursor.getString(2));
-        message.setImageUrl(cursor.getString(3));
-        message.setTime(cursor.getString(4));
-        message.setFavourite(cursor.getInt(5)>0);
+        Message message = new Message();
         return message;
     }
 
-    public static String formatTimeForView(Context context, String time) {
+    public static String formatTimeForView(Context context, long time) {
 
-        return DateUtils.formatDateTime(context,Long.parseLong(time),DateUtils.FORMAT_SHOW_TIME);
+        return DateUtils.formatDateTime(context, time, DateUtils.FORMAT_SHOW_TIME);
 
     }
 
-    public static String formatDateForView(Context context, String time) {
+    public static String formatDateForView(Context context, long date) {
 
-        return DateUtils.formatDateTime(context,Long.parseLong(time),DateUtils.FORMAT_ABBREV_RELATIVE);
+        return DateUtils.formatDateTime(context, date, DateUtils.FORMAT_ABBREV_RELATIVE);
 
+    }
+
+
+    public void setOutputFile(String outputFile) {
+        this.outputFile = outputFile;
+    }
+
+    public String getOutputFile() {
+        return outputFile;
     }
 }

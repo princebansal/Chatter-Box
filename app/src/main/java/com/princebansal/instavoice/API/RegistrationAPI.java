@@ -16,8 +16,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.princebansal.instavoice.AppController;
+import com.princebansal.instavoice.Boundary.API.AppController;
+import com.princebansal.instavoice.Boundary.Managers.DataHandler;
 import com.princebansal.instavoice.DashboardActivity;
+import com.princebansal.instavoice.Entity.Activities.MainActivity;
 
 import org.json.JSONObject;
 
@@ -56,6 +58,7 @@ public class RegistrationAPI {
         registerparams.put("phone_num_edited",true);
         registerparams.put("opr_info_edited",false);
         registerparams.put("sim_serial_num",sim_serial_num);
+        DataHandler.getInstance(context).saveSimSerailNumber(sim_serial_num);
         registerparams.put("sim_opr_mcc_mnc",networkOperator);
         registerparams.put("country_code",countrycode);
         data= new Gson().toJson(registerparams);
@@ -161,10 +164,11 @@ public class RegistrationAPI {
                                 SharedPreferences.Editor editor=preferences.edit();
                                 editor.putString("login_id",login_id);
                                 editor.putString("user_secure_key",user_secure_key);
+                                editor.putString("iv_user_id",res.getString("iv_user_id"));
                                 //editor.putString("mqtt_password",res.getString("mqtt_password"));
                                 editor.commit();
 
-                                context.startActivity(new Intent(context, DashboardActivity.class));
+                                context.startActivity(new Intent(context, MainActivity.class));
 
 
                             }

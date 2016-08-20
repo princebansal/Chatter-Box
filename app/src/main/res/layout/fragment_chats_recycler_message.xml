@@ -58,8 +58,7 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_stars_yellow_24dp"
-                android:visibility="gone"
+                android:src="@drawable/ic_play_circle_outline_black_24dp"
                 android:id="@+id/fav_icon"/>
         <TextView
             android:id="@+id/message"

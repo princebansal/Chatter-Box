@@ -5,6 +5,7 @@
 
 package com.princebansal.instavoice.Entity.Activities;
 
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -19,11 +20,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.princebansal.instavoice.Entity.Fragments.ChatFragment;
-import com.princebansal.instavoice.Entity.Fragments.InsightsFragment;
+import com.princebansal.instavoice.Entity.Fragments.FollowFragment;
 import com.princebansal.instavoice.R;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    private static MediaRecorder mediaRecorder;
 
     private static final int NUM_PAGES = 2;
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -89,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
                     ChatFragment chatFragment = ChatFragment.newInstance();
                     return chatFragment;
                 case 1:
-                    InsightsFragment insightsFragment = InsightsFragment.newInstance();
-                    return insightsFragment;
+                    FollowFragment followFragment = FollowFragment.newInstance();
+                    return followFragment;
 
             }
             return null;
@@ -106,6 +109,16 @@ public class MainActivity extends AppCompatActivity {
             return titles[position];
         }
 
+    }
+
+    public static MediaRecorder getMediaRecorderInstance(){
+        if(mediaRecorder==null){
+            mediaRecorder=new MediaRecorder();
+            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
+            mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.DEFAULT);
+        }
+        return mediaRecorder;
     }
 
 }

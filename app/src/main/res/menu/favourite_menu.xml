@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2016. Created by Prince Bansal on 16-08-2016.
+  -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:title="@string/favourite_menu_title"
+        android:icon="@drawable/ic_stars_white_24dp"
+        android:id="@+id/favourite_buttton"
+        app:showAsAction="always"
+        android:visible="false"/>
+
+    <item android:title="@string/favourite_menu_title_clear"
+        android:icon="@drawable/ic_highlight_off_black_24dp"
+        android:id="@+id/favourite_clear_buttton"
+        app:showAsAction="always"
+        android:visible="false"/>
+
+</menu>
